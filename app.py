@@ -2,6 +2,7 @@ from telegram import Update
 from telegram.ext import ApplicationBuilder, MessageHandler, CommandHandler, filters, ContextTypes
 import joblib
 import numpy as np
+import os
 
 # === Load the saved model and vectorizer ===
 bundle = joblib.load("naija_sms_detector_bundle.joblib")
@@ -48,8 +49,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # === Run the bot ===
 if __name__ == "__main__":
-    app = ApplicationBuilder().token("YOUR_BOT_TOKEN_HERE").build()
-
+    app = ApplicationBuilder().token(os.getenv("8049856412:AAEaHkM752bTS_FWknMFkXmTLLJAWdemzeM")).build()
     # /start intro
     app.add_handler(CommandHandler("start", start))
 
