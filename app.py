@@ -49,7 +49,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # === Run the bot ===
 if __name__ == "__main__":
-    app = ApplicationBuilder().token(os.getenv("8049856412:AAEaHkM752bTS_FWknMFkXmTLLJAWdemzeM")).build()
+    app = ApplicationBuilder().token(os.getenv("BOT_TOKEN")).build()
     # /start intro
     app.add_handler(CommandHandler("start", start))
 
