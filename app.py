@@ -1,5 +1,7 @@
 from telegram import Update
 from telegram.ext import ApplicationBuilder, MessageHandler, CommandHandler, filters, ContextTypes
+from flask import Flask
+import threading
 import joblib
 import numpy as np
 import os
@@ -8,6 +10,16 @@ import os
 bundle = joblib.load("naija_sms_detector_bundle.joblib")
 model = bundle["model"]
 vectorizer = bundle["vectorizer"]
+
+# === Flask Web Server for UptimeRobot ping ===
+flask_app = Flask(__name__)
+
+@flask_app.route('/')
+def home():
+    return "✅ Naija Scam Detector Bot is alive."
+
+def run_flask():
+    flask_app.run(host='0.0.0.0', port=8080)
 
 # === /start command ===
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -27,7 +39,6 @@ def analyze_text(text):
     proba = model.predict_proba(vector)[0][1]  # Probability of SCAM
     confidence = round(proba * 100, 2)
 
-    # === Classify based on confidence thresholds ===
     if confidence >= 85:
         emoji = "🔴"
         label = f"{emoji} *Scam Detected!*"
@@ -38,8 +49,7 @@ def analyze_text(text):
         emoji = "🟢"
         label = f"{emoji} *Legit Message*"
 
-    response = f"{label}\n*Confidence:* {confidence}%"
-    return response
+    return f"{label}\n*Confidence:* {confidence}%"
 
 # === Handle incoming message ===
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -47,13 +57,19 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     result = analyze_text(text)
     await update.message.reply_markdown(result)
 
-# === Run the bot ===
+# === Main entry point ===
 if __name__ == "__main__":
-    app = ApplicationBuilder().token(os.getenv("BOT_TOKEN")).build()
-    # /start intro
-    app.add_handler(CommandHandler("start", start))
+    # Start Flask server in background thread
+    threading.Thread(target=run_flask).start()
 
-    # Handle normal messages
+    # Load bot token from environment
+    bot_token = os.getenv("BOT_TOKEN")
+    if not bot_token:
+        raise ValueError("⚠️ BOT_TOKEN environment variable not found!")
+
+    # Start Telegram bot
+    app = ApplicationBuilder().token(bot_token).build()
+    app.add_handler(CommandHandler("start", start))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
     app.run_polling()
