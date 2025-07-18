@@ -42,9 +42,6 @@ This example demonstrates the bot’s ability to catch **social engineering tact
 ## 🔗 Try the Bot
 
 [🚀 Launch Naija Scam Bot](**Coming Soon!**)
-
-Or check the API/API model locally or in the accompanying notebook.
-
 ---
 
 ## 🛠 Built With
