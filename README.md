@@ -1,4 +1,4 @@
-# 🇳🇬 Naija Scam SMS Detector Bot
+# Naija Scam SMS Detector Bot
 
 The **Naija Scam SMS Detector** is an AI-powered Telegram bot designed to help users in Nigeria quickly assess whether a suspicious SMS or message might be part of a scam.
 
